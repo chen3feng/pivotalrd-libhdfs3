@@ -177,7 +177,7 @@ int64_t InputStreamImpl::readBlockLength(const LocatedBlock & b) {
             }
         } catch (const ReplicaNotFoundException & e) {
             std::string buffer;
-            LOG(LOG_ERROR,
+            LOG(INFO,
                 "InputStreamImpl: failed to get block visible length for Block: %s file %s from Datanode: %s\n%s",
                 b.toString().c_str(), path.c_str(), nodes[i].formatAddress().c_str(), GetExceptionDetail(e, buffer));
             LOG(INFO,
@@ -186,7 +186,7 @@ int64_t InputStreamImpl::readBlockLength(const LocatedBlock & b) {
             --replicaNotFoundCount;
         } catch (const HdfsIOException & e) {
             std::string buffer;
-            LOG(LOG_ERROR,
+            LOG(INFO,
                 "InputStreamImpl: failed to get block visible length for Block: %s file %s from Datanode: %s\n%s",
                 b.toString().c_str(), path.c_str(), nodes[i].formatAddress().c_str(), GetExceptionDetail(e, buffer));
             LOG(INFO,
@@ -202,6 +202,10 @@ int64_t InputStreamImpl::readBlockLength(const LocatedBlock & b) {
     if (replicaNotFoundCount == 0) {
         return 0;
     }
+
+    LOG(LOG_ERROR,
+        "InputStreamImpl: failed to get block visible length for Block: %s file %s from all Datanodes",
+        b.toString().c_str(), path.c_str());
 
     return -1;
 }
